@@ -1,0 +1,4 @@
+com\niko\boot\lock\annotation\RedissonLock.class
+com\niko\boot\lock\RedissonLockType.class
+com\niko\boot\lock\aspect\RedissonLockAspect$1.class
+com\niko\boot\lock\aspect\RedissonLockAspect.class

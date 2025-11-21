@@ -1,0 +1,7 @@
+# 忽略旧文档（已整合到 MAVEN_BUILD_GUIDE.md）
+*.md.old
+*.old.md
+
+# 归档目录
+archive/
+

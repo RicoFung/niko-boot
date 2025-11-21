@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>com.niko.boot</groupId>
+    <artifactId>niko-boot-dependencies</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    
+    <name>niko-boot-dependencies</name>
+    <description>Dependency management for Niko Boot Framework</description>
+
+    <properties>
+        <!-- 统一版本号 -->
+        <niko.boot.version>1.0.0-SNAPSHOT</niko.boot.version>
+        
+        <!-- Spring Boot 版本 -->
+        <spring.boot.version>3.4.1</spring.boot.version>
+        <spring-session-data-redis.version>3.4.1</spring-session-data-redis.version>
+        <spring-boot-starter-quartz.version>3.4.1</spring-boot-starter-quartz.version>
+        <spring-security-oauth2-authorization-server.version>1.4.1</spring-security-oauth2-authorization-server.version>
+        
+        <!-- MyBatis 版本 -->
+        <mybatis.spring.boot.version>3.0.4</mybatis.spring.boot.version>
+        
+        <!-- Redis 版本 -->
+        <redisson-spring-boot-starter.version>3.11.5</redisson-spring-boot-starter.version>
+        
+        <!-- Spring Cloud 版本 -->
+        <spring-cloud-dependencies.version>2024.0.0</spring-cloud-dependencies.version>
+        
+        <!-- Micrometer 版本 -->
+        <micrometer-tracing.version>1.4.1</micrometer-tracing.version>
+        
+        <!-- 工具类版本 -->
+        <httpclient.version>4.5.14</httpclient.version>
+        <poi.version>3.15</poi.version>
+        <cxf.version>3.2.0</cxf.version>
+        <jwt.version>0.9.1</jwt.version>
+        <springdoc.version>2.8.6</springdoc.version>
+        <guava.version>20.0</guava.version>
+        <jasper.version>7.0.1</jasper.version>
+        
+        <!-- Servlet 版本 -->
+        <jakarta.servlet.api.version>6.1.0</jakarta.servlet.api.version>
+        
+        <!-- Commons 版本 -->
+        <commons-net.version>3.4</commons-net.version>
+        <commons-io.version>2.7</commons-io.version>
+        <commons-beanutils.version>1.9.4</commons-beanutils.version>
+        <commons-configuration.version>1.9</commons-configuration.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
+        <commons-lang3.version>3.17.0</commons-lang3.version>
+        
+        <!-- Jackson 版本 -->
+        <jackson.version>2.18.2</jackson.version>
+        
+        <!-- 其他工具版本 -->
+        <ognl.version>3.2.3</ognl.version>
+        <transactions-osgi.version>3.9.3</transactions-osgi.version>
+        <json.version>20180130</json.version>
+        <cas-client-core.version>3.4.1</cas-client-core.version>
+        <dozer.version>5.4.0</dozer.version>
+        <logback-gelf.version>6.1.0</logback-gelf.version>
+        <hutool-captcha.version>5.3.8</hutool-captcha.version>
+        <hutool.version>5.8.16</hutool.version>
+        
+        <!-- 数据库驱动版本 -->
+        <sqljdbc4.version>4.0</sqljdbc4.version>
+        <mysql-connector.version>5.1.46</mysql-connector.version>
+        <ojdbc14.version>1.0</ojdbc14.version>
+        
+        <!-- 字体版本 -->
+        <font-msyh.version>1.0</font-msyh.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spring Cloud BOM -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud-dependencies.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            
+            <!-- Micrometer Tracing -->
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-tracing</artifactId>
+                <version>${micrometer-tracing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-tracing-bridge-brave</artifactId>
+                <version>${micrometer-tracing.version}</version>
+            </dependency>
+            
+            <!-- Spring Boot Web支持 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-validation</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-thymeleaf</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-redis</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-jdbc</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-security</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-oauth2-client</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-jta-atomikos</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-quartz</artifactId>
+                <version>${spring-boot-starter-quartz.version}</version>
+            </dependency>
+            
+            <!-- MyBatis -->
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${mybatis.spring.boot.version}</version>
+            </dependency>
+            
+            <!-- Spring Security OAuth2 -->
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-oauth2-authorization-server</artifactId>
+                <version>${spring-security-oauth2-authorization-server.version}</version>
+            </dependency>
+            
+            <!-- Spring Session -->
+            <dependency>
+                <groupId>org.springframework.session</groupId>
+                <artifactId>spring-session-data-redis</artifactId>
+                <version>${spring-session-data-redis.version}</version>
+            </dependency>
+            
+            <!-- Redisson -->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson-spring-boot-starter.version}</version>
+            </dependency>
+            
+            <!-- Apache CXF -->
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
+                <version>${cxf.version}</version>
+                <optional>true</optional>
+            </dependency>
+            
+            <!-- JWT -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jwt.version}</version>
+            </dependency>
+            
+            <!-- Jackson -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            
+            <!-- JSON -->
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>${json.version}</version>
+            </dependency>
+            
+            <!-- POI -->
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml-schemas</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-scratchpad</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            
+            <!-- JasperReports -->
+            <dependency>
+                <groupId>net.sf.jasperreports</groupId>
+                <artifactId>jasperreports</artifactId>
+                <version>${jasper.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.jasperreports</groupId>
+                <artifactId>jasperreports-fonts</artifactId>
+                <version>${jasper.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.chok2</groupId>
+                <artifactId>font-msyh</artifactId>
+                <version>${font-msyh.version}</version>
+            </dependency>
+            
+            <!-- SpringDoc OpenAPI -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+            
+            <!-- Dozer -->
+            <dependency>
+                <groupId>net.sf.dozer</groupId>
+                <artifactId>dozer</artifactId>
+                <version>${dozer.version}</version>
+            </dependency>
+            
+            <!-- Logback GELF -->
+            <dependency>
+                <groupId>de.siegmar</groupId>
+                <artifactId>logback-gelf</artifactId>
+                <version>${logback-gelf.version}</version>
+            </dependency>
+            
+            <!-- Commons -->
+            <dependency>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <version>${commons-configuration.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-net</groupId>
+                <artifactId>commons-net</artifactId>
+                <version>${commons-net.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collections4.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+            
+            <!-- HTTP Client -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient.version}</version>
+            </dependency>
+            
+            <!-- Guava -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            
+            <!-- Hutool -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-captcha</artifactId>
+                <version>${hutool-captcha.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            
+            <!-- OGNL -->
+            <dependency>
+                <groupId>ognl</groupId>
+                <artifactId>ognl</artifactId>
+                <version>${ognl.version}</version>
+            </dependency>
+            
+            <!-- Transactions OSGi -->
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-osgi</artifactId>
+                <version>${transactions-osgi.version}</version>
+            </dependency>
+            
+            <!-- 数据库驱动 -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql-connector.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.oracle</groupId>
+                <artifactId>ojdbc14</artifactId>
+                <version>${ojdbc14.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>sqljdbc4</artifactId>
+                <version>${sqljdbc4.version}</version>
+            </dependency>
+            
+            <!-- Servlet API -->
+            <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>${jakarta.servlet.api.version}</version>
+            </dependency>
+            
+            <!-- Niko Boot 内部模块版本（统一版本号） -->
+            <dependency>
+                <groupId>com.niko.boot</groupId>
+                <artifactId>niko-boot-starter-web-base</artifactId>
+                <version>${niko.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.niko.boot</groupId>
+                <artifactId>niko-boot-starter-web-plus</artifactId>
+                <version>${niko.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.niko.boot</groupId>
+                <artifactId>niko-boot-starter-service</artifactId>
+                <version>${niko.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.niko.boot</groupId>
+                <artifactId>niko-boot-starter-dao</artifactId>
+                <version>${niko.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.niko.boot</groupId>
+                <artifactId>niko-boot-starter-model</artifactId>
+                <version>${niko.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.niko.boot</groupId>
+                <artifactId>niko-boot-starter-cache</artifactId>
+                <version>${niko.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.niko.boot</groupId>
+                <artifactId>niko-boot-starter-lock</artifactId>
+                <version>${niko.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.niko.boot</groupId>
+                <artifactId>niko-boot-starter-component</artifactId>
+                <version>${niko.boot.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>
+

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>com.niko.boot</groupId>
+    <artifactId>niko-boot-starter-lock</artifactId>
+    <packaging>jar</packaging>
+    
+    <parent>
+        <groupId>com.niko.boot</groupId>
+        <artifactId>niko-boot-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../niko-boot-parent/pom.xml</relativePath>
+    </parent>
+
+    <dependencies>
+        <!-- 只依赖Redisson，不依赖其他niko模块 -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+    </dependencies>
+</project>
+

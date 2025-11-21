@@ -1,0 +1,189 @@
+package com.niko.boot.web.util;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
+/**
+ * 时间操作类
+ * 封装chok2-util-core的TimeUtil
+ */
+public class TimeUtil {
+    
+    /**
+     * 返回当前的时间，格式为：yyyy-MM-dd HH:mm:ss
+     * @return String
+     */
+    public static String getCurrentTime() {
+        return getCurrentTime("yyyy-MM-dd HH:mm:ss");
+    }
+    
+    /**
+     * 返回当前的时间，格式为：yyyy-MM-dd
+     * @return String
+     */
+    public static String getCurrentDate() {
+        return getCurrentTime("yyyy-MM-dd");
+    }
+    
+    /**
+     * 返回当前的时间
+     * @param format 需要显示的格式化参数，如：yyyy-MM-dd HH:mm:ss
+     * @return String
+     */
+    public static String getCurrentTime(String format) {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.CHINA);
+        return sdf.format(cal.getTime());
+    }
+    
+    /**
+     * 返回N个月前的日期
+     * @param n
+     * @return
+     */
+    public static String getCurrentDateMonthsAgo(int n) {
+        return getCurrentTimeMonthsAgo("yyyy-MM-dd", n);
+    }
+    
+    /**
+     * 返回N个月前的时间
+     * @param n
+     * @return
+     */
+    public static String getCurrentTimeMonthsAgo(int n) {
+        return getCurrentTimeMonthsAgo("yyyy-MM-dd HH:mm:ss", n);
+    }
+    
+    /**
+     * 返回N个月前的时间
+     * @param format 时间格式
+     * @param n 月数
+     * @return
+     */
+    public static String getCurrentTimeMonthsAgo(String format, int n) {
+        Date dNow = new Date();   // 当前时间
+        Date dBefore = new Date();
+        Calendar calendar = Calendar.getInstance(); // 得到日历
+        calendar.setTime(dNow); // 把当前时间赋给日历
+        calendar.add(Calendar.MONTH, -n);  // 设置为前N月
+        dBefore = calendar.getTime();   // 得到前N月的时间
+        SimpleDateFormat sdf = new SimpleDateFormat(format); // 设置时间格式
+        String defaultStartDate = sdf.format(dBefore);    // 格式化前N月的时间
+        return defaultStartDate;
+    }
+    
+    /**
+     * 格式化时间
+     * @param date 需要格式化的时间
+     * @param format 需要显示的格式化参数，如：yyyy-MM-dd HH:mm:ss
+     * @return String
+     */
+    public static String formatDate(Date date, String format) {
+        try {
+            if (date == null) {
+                return "";
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.CHINA);
+            return sdf.format(date);
+        } catch (Exception ex) {
+            return "";
+        }
+    }
+    
+    /**
+     * 格式化时间
+     * @param value 需要格式化的时间字符串
+     * @param format 对应时间字符串的格式化参数，如：yyyy-MM-dd HH:mm:ss
+     * @return Date
+     */
+    public static Date convertString(String value, String format) {
+        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.CHINA);
+        if (value == null) {
+            return null;
+        }
+        try {
+            return sdf.parse(value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    /**
+     * 格式化时间，格式为：yyyy-MM-dd HH:mm:ss
+     * @param value 需要格式化的时间字符串，格式为：yyyy-MM-dd HH:mm:ss
+     * @return Date
+     */
+    public static Date convertString(String value) {
+        return convertString(value, "yyyy-MM-dd HH:mm:ss");
+    }
+    
+    /**
+     * 切换日期格式, 如：dd-MMM-yy（英国） 转 yyyy-MM-dd（中国）
+     * @param dateString
+     * @param dateFormatFm
+     * @param localeFm
+     * @param dateFormatTo
+     * @param localeTo
+     * @return String
+     * @throws ParseException
+     */
+    public static String toggleFormat(String dateString, String dateFormatFm, Locale localeFm, String dateFormatTo, Locale localeTo) throws ParseException {
+        SimpleDateFormat sdfFm = new SimpleDateFormat(dateFormatFm, localeFm);
+        SimpleDateFormat sdfTo = new SimpleDateFormat(dateFormatTo, localeTo);
+        
+        Date date = sdfFm.parse(dateString);
+        String result = sdfTo.format(date);
+        return result;
+    }
+    
+    /**
+     * 获取当前毫秒时间
+     * @return String
+     */
+    public static String getCurrentMillTime() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+        String formatStr = formatter.format(new Date());
+        return formatStr;
+    }
+    
+    /**
+     * 日期格式字符串转换成时间戳
+     * 
+     * @param date_str 字符串日期
+     * @param format 如：yyyy-MM-dd HH:mm:ss
+     * @return 时间戳字符串
+     */
+    public static String date2TimeStamp(String date_str, String format) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat(format);
+            return String.valueOf(sdf.parse(date_str).getTime());
+        } catch (Exception e) {
+            return "";
+        }
+    }
+    
+    /**
+     * 校验日期天数范围
+     * @param startDateString "yyyy-MM-dd HH:mm:ss"
+     * @param endDateString "yyyy-MM-dd HH:mm:ss"
+     * @param daysRange 天数范围
+     * @return Boolean
+     */
+    public static Boolean validDaysRange(String startDateString, String endDateString, Integer daysRange) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDate startDate = LocalDate.parse(startDateString, formatter);
+        LocalDate endDate = LocalDate.parse(endDateString, formatter);
+        long daysDiff = ChronoUnit.DAYS.between(startDate, endDate);
+        if (daysDiff > daysRange) {
+            return false;
+        }
+        return true;
+    }
+}
+
