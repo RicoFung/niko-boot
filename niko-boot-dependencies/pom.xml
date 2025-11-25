@@ -67,10 +67,17 @@
         <hutool-captcha.version>5.3.8</hutool-captcha.version>
         <hutool.version>5.8.16</hutool.version>
         
+        <!-- Lombok 和 MapStruct 版本 -->
+        <lombok.version>1.18.38</lombok.version>
+        <mapstruct.version>1.5.3.Final</mapstruct.version>
+        
+        <!-- Sa-Token 版本 -->
+        <sa-token.version>1.39.0</sa-token.version>
+        
         <!-- 数据库驱动版本 -->
         <sqljdbc4.version>4.0</sqljdbc4.version>
         <mysql-connector.version>5.1.46</mysql-connector.version>
-        <ojdbc14.version>1.0</ojdbc14.version>
+        <ojdbc11.version>23.26.0.0.0</ojdbc11.version>
         
         <!-- 字体版本 -->
         <font-msyh.version>1.0</font-msyh.version>
@@ -78,6 +85,15 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Spring Boot Dependencies BOM -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            
             <!-- Spring Cloud BOM -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
@@ -100,6 +116,11 @@
             </dependency>
             
             <!-- Spring Boot Web支持 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-actuator</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
@@ -357,9 +378,9 @@
                 <version>${mysql-connector.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.oracle</groupId>
-                <artifactId>ojdbc14</artifactId>
-                <version>${ojdbc14.version}</version>
+                <groupId>com.oracle.database.jdbc</groupId>
+                <artifactId>ojdbc11</artifactId>
+                <version>${ojdbc11.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.microsoft.sqlserver</groupId>
@@ -372,6 +393,56 @@
                 <groupId>jakarta.servlet</groupId>
                 <artifactId>jakarta.servlet-api</artifactId>
                 <version>${jakarta.servlet.api.version}</version>
+            </dependency>
+            
+            <!-- Commons Pool2 -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>2.12.0</version>
+            </dependency>
+            
+            <!-- HikariCP -->
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>5.1.0</version>
+            </dependency>
+            
+            <!-- Lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            
+            <!-- MapStruct -->
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+            
+            <!-- Sa-Token -->
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-spring-boot3-starter</artifactId>
+                <version>${sa-token.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-reactor-spring-boot3-starter</artifactId>
+                <version>${sa-token.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-redis-jackson</artifactId>
+                <version>${sa-token.version}</version>
             </dependency>
             
             <!-- Niko Boot 内部模块版本（统一版本号） -->
