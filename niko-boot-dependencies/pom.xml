@@ -30,6 +30,8 @@
         
         <!-- Spring Cloud 版本 -->
         <spring-cloud-dependencies.version>2024.0.0</spring-cloud-dependencies.version>
+        <!-- Spring Cloud Alibaba 版本 (兼容 Spring Cloud 2024.0.0) -->
+        <spring-cloud-alibaba.version>2023.0.1.2</spring-cloud-alibaba.version>
         
         <!-- Micrometer 版本 -->
         <micrometer-tracing.version>1.4.1</micrometer-tracing.version>
@@ -101,6 +103,29 @@
                 <version>${spring-cloud-dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            
+            <!-- Spring Cloud Alibaba BOM -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            
+            <!-- Nacos Config -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+            </dependency>
+            
+            <!-- Nacos Discovery (如果需要服务发现) -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
             </dependency>
             
             <!-- Micrometer Tracing -->
