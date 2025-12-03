@@ -25,8 +25,8 @@
         <!-- MyBatis 版本 -->
         <mybatis.spring.boot.version>3.0.4</mybatis.spring.boot.version>
         
-        <!-- Redis 版本 -->
-        <redisson-spring-boot-starter.version>3.11.5</redisson-spring-boot-starter.version>
+        <!-- Redisson Spring Boot Starter 版本 -->
+        <redisson-spring-boot-starter.version>3.52.0</redisson-spring-boot-starter.version>
         
         <!-- Spring Cloud 版本 -->
         <spring-cloud-dependencies.version>2024.0.0</spring-cloud-dependencies.version>
