@@ -18,6 +18,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.niko.boot.lock.annotation.RedissonLock;
+import com.niko.boot.lock.exception.DistributedLockException;
+import com.niko.boot.lock.util.LockSpelExpressionParser;
 
 /**
  * Redisson分布式锁切面
@@ -41,11 +43,38 @@ public class RedissonLockAspect {
     @Around("lockPoint()")
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
         // 获取被AOP方法
-        Method method = ((MethodSignature) pjp.getSignature()).getMethod();
+        MethodSignature signature = (MethodSignature) pjp.getSignature();
+        Method method = signature.getMethod();
+        
         // 获取注解的锁对象
         RedissonLock redissonLock = method.getAnnotation(RedissonLock.class);
-        // 获取锁key
-        String key = redissonLock.lockKey();
+        
+        // 获取方法参数
+        Object[] args = pjp.getArgs();
+        
+        // 获取锁key，支持 SpEL 表达式解析方法参数
+        String keyExpression = redissonLock.lockKey();
+        log.info("解析锁key表达式: [{}], 方法参数: {}", keyExpression, java.util.Arrays.toString(args));
+        String lockKey = LockSpelExpressionParser.parseExpression(keyExpression, method, args);
+        log.info("解析后的锁key: [{}]", lockKey);
+        
+        // 验证锁key不能为空
+        if (lockKey == null || lockKey.isEmpty()) {
+            String failMsgExpression = redissonLock.lockFailMsg();
+            String failMsg = LockSpelExpressionParser.parseExpression(failMsgExpression, method, args);
+            log.error("❌ 锁key解析为空或空字符串！表达式: [{}], 解析结果: [{}], 方法参数: {}, 错误消息: {}", 
+                keyExpression, lockKey, java.util.Arrays.toString(args), failMsg);
+            throw new DistributedLockException(failMsg);
+        }
+        
+        log.info("锁key验证通过，将使用此key获取锁: [{}]", lockKey);
+        
+        // 解析 lockFailMsg（支持 SpEL 表达式）
+        String failMsgExpression = redissonLock.lockFailMsg();
+        log.info("解析lockFailMsg表达式: [{}], 方法参数: {}", failMsgExpression, java.util.Arrays.toString(args));
+        String parsedFailMsg = LockSpelExpressionParser.parseExpression(failMsgExpression, method, args);
+        log.info("解析后的lockFailMsg: [{}]", parsedFailMsg);
+        
         // 获取等待锁的时间
         long waitTime = redissonLock.waitTime();
         // 获取持有锁的时间
@@ -53,47 +82,46 @@ public class RedissonLockAspect {
         // 获取加锁时间单位
         TimeUnit timeUnit = redissonLock.timeUnit();
         // 获取锁对象
-        RLock lock = getLock(key, redissonLock);
+        RLock lock = getLock(lockKey, redissonLock);
         // 获取tryLock选项
         int tryLockOption = redissonLock.tryLockOption();
         
         switch (tryLockOption) {
-            case 1: return tryLock1(key, redissonLock, lock, pjp);
-            case 2: return tryLock2(key, waitTime, timeUnit, redissonLock, lock, pjp);
-            case 3: return tryLock3(key, waitTime, leaseTime, timeUnit, redissonLock, lock, pjp);
+            case 1: return tryLock1(lockKey, parsedFailMsg, lock, pjp);
+            case 2: return tryLock2(lockKey, parsedFailMsg, waitTime, timeUnit, lock, pjp);
+            case 3: return tryLock3(lockKey, parsedFailMsg, waitTime, leaseTime, timeUnit, lock, pjp);
         }
         return null;
     }
     
-    private Object tryLock1(String key, RedissonLock redissonLock, RLock lock, ProceedingJoinPoint pjp) throws Throwable {
-        if (log.isDebugEnabled()) {
-            log.debug("Use tryLockOption is 1: tryLock()");
-        }
+    private Object tryLock1(String key, String failMsg, RLock lock, ProceedingJoinPoint pjp) throws Throwable {
+        log.info("尝试获取分布式锁，key: [{}], method: {}", key, pjp.getSignature().toShortString());
         
-        if (lock.tryLock()) {
+        boolean lockAcquired = lock.tryLock();
+        log.info("锁获取结果，key: [{}], acquired: {}", key, lockAcquired);
+        
+        if (lockAcquired) {
             try {
-                if (log.isDebugEnabled()) {
-                    log.debug("get lock success [{}]", key);
-                }
-                return pjp.proceed();
+                log.info("成功获取锁，开始执行方法，key: [{}]", key);
+                Object result = pjp.proceed();
+                log.info("方法执行完成，释放锁，key: [{}]", key);
+                return result;
             } catch (Exception e) {
-                log.error("execute locked method occured an exception", e);
+                log.error("执行加锁方法时发生异常，key: [{}]", key, e);
+                throw e; // 重新抛出异常，确保异常能够传播
             } finally {
-                lock.unlock();
-                if (log.isDebugEnabled()) {
-                    log.debug("release lock [{}]", key);
+                if (lock.isHeldByCurrentThread()) {
+                    lock.unlock();
+                    log.info("已释放锁，key: [{}]", key);
                 }
             }
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("{} [{}]", redissonLock.lockFailMsg(), key);
-            }
-            throw new Exception(redissonLock.lockFailMsg());
+            log.warn("获取锁失败，key: [{}], 错误信息: {}", key, failMsg);
+            throw new DistributedLockException(failMsg);
         }
-        return null;
     }
     
-    private Object tryLock2(String key, long waitTime, TimeUnit timeUnit, RedissonLock redissonLock, RLock lock, ProceedingJoinPoint pjp) throws Throwable {
+    private Object tryLock2(String key, String failMsg, long waitTime, TimeUnit timeUnit, RLock lock, ProceedingJoinPoint pjp) throws Throwable {
         if (log.isDebugEnabled()) {
             log.debug("Use tryLockOption is 2: tryLock(waitTime, timeUnit)");
         }
@@ -106,22 +134,22 @@ public class RedissonLockAspect {
                 return pjp.proceed();
             } catch (Exception e) {
                 log.error("execute locked method occured an exception", e);
+                throw e; // 重新抛出异常，确保异常能够传播
             } finally {
-                lock.unlock();
-                if (log.isDebugEnabled()) {
-                    log.debug("release lock [{}]", key);
+                if (lock.isHeldByCurrentThread()) {
+                    lock.unlock();
+                    if (log.isDebugEnabled()) {
+                        log.debug("release lock [{}]", key);
+                    }
                 }
             }
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("{} [{}]", redissonLock.lockFailMsg(), key);
-            }
-            throw new Exception(redissonLock.lockFailMsg());
+            log.warn("获取锁失败，key: [{}], 错误信息: {}", key, failMsg);
+            throw new DistributedLockException(failMsg);
         }
-        return null;
     }
     
-    private Object tryLock3(String key, long waitTime, long leaseTime, TimeUnit timeUnit, RedissonLock redissonLock, RLock lock, ProceedingJoinPoint pjp) throws Throwable {
+    private Object tryLock3(String key, String failMsg, long waitTime, long leaseTime, TimeUnit timeUnit, RLock lock, ProceedingJoinPoint pjp) throws Throwable {
         if (log.isDebugEnabled()) {
             log.debug("Use tryLockOption is 3: tryLock(waitTime, leaseTime, timeUnit)");
         }
@@ -134,23 +162,21 @@ public class RedissonLockAspect {
                 return pjp.proceed();
             } catch (Exception e) {
                 log.error("execute locked method occured an exception", e);
+                throw e; // 重新抛出异常，确保异常能够传播
             } finally {
                 if (lock.isHeldByCurrentThread()) {
                     lock.unlock();
+                    if (log.isDebugEnabled()) {
+                        log.debug("release lock [{}]", key);
+                    }
                 } else {
-                    throw new Exception("Business timeout ! lock [" + key + "] has been released !");
-                }
-                if (log.isDebugEnabled()) {
-                    log.debug("release lock [{}]", key);
+                    throw new RuntimeException("Business timeout ! lock [" + key + "] has been released !");
                 }
             }
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("{} [{}]", redissonLock.lockFailMsg(), key);
-            }
-            throw new Exception(redissonLock.lockFailMsg());
+            log.warn("获取锁失败，key: [{}], 错误信息: {}", key, failMsg);
+            throw new DistributedLockException(failMsg);
         }
-        return null;
     }
     
     private RLock getLock(String key, RedissonLock redissonLock) {
