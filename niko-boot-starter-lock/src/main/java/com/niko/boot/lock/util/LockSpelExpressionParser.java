@@ -70,21 +70,11 @@ public class LockSpelExpressionParser {
                 return value != null ? value.toString() : null;
             }
             
-            // 解析表达式：处理字符串中所有的 SpEL 表达式片段
-            String result = parseSpelExpression(expression, context);
-            
-            // 记录解析结果（用于调试）
-            if (result != null && !result.equals(expression)) {
-                org.slf4j.LoggerFactory.getLogger(LockSpelExpressionParser.class)
-                    .debug("SpEL 表达式解析成功: [{}] -> [{}]", expression, result);
-            }
-            
-            return result;
+            return parseSpelExpression(expression, context);
             
         } catch (Exception e) {
-            // 如果解析失败，返回原字符串并记录警告
             org.slf4j.LoggerFactory.getLogger(LockSpelExpressionParser.class)
-                .warn("Failed to parse SpEL expression: {}, error: {}", expression, e.getMessage(), e);
+                .warn("SpEL表达式解析失败: {}, 错误: {}", expression, e.getMessage());
             return expression;
         }
     }
@@ -142,15 +132,10 @@ public class LockSpelExpressionParser {
             Expression expr = parser.parseExpression(spelContent);
             Object value = expr.getValue(context);
             
-            // 将解析结果转换为字符串并追加
             if (value != null) {
                 result.append(value.toString());
             } else {
-                // 如果 SpEL 表达式返回 null，追加 "null" 字符串（而不是什么都不追加）
-                // 这样可以让用户知道参数值为 null
                 result.append("null");
-                org.slf4j.LoggerFactory.getLogger(LockSpelExpressionParser.class)
-                    .debug("SpEL 表达式返回 null: [{}], 表达式内容: [{}], 将追加 'null' 字符串", spelContent, expression);
             }
             
             start = spelEnd + 1;
@@ -182,36 +167,14 @@ public class LockSpelExpressionParser {
             parameterNames = parameterNameDiscoverer.getParameterNames(method);
         }
         
-        org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LockSpelExpressionParser.class);
-        if (logger.isDebugEnabled()) {
-            logger.debug("创建评估上下文，方法: {}, 参数数量: {}, 参数名: {}", 
-                method != null ? method.getName() : "null", 
-                args.length, 
-                parameterNames != null ? java.util.Arrays.toString(parameterNames) : "null");
-        }
-        
         for (int i = 0; i < args.length; i++) {
-            // 设置参数值到根对象，可以通过索引访问（#p0, #p1 或 #a0, #a1）
             context.setVariable("p" + i, args[i]);
             context.setVariable("a" + i, args[i]);
             
-            // 如果参数名称可用，也设置参数名作为变量
             if (parameterNames != null && i < parameterNames.length) {
                 String paramName = parameterNames[i];
-                // 只有当参数名不是默认的 arg0, arg1 时才使用
                 if (paramName != null && !paramName.matches("arg\\d+")) {
                     context.setVariable(paramName, args[i]);
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("设置参数变量: {} = {}", paramName, args[i]);
-                    }
-                } else {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("跳过默认参数名: {}", paramName);
-                    }
-                }
-            } else {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("参数名不可用，仅使用索引方式访问: p{} / a{}", i, i);
                 }
             }
         }
