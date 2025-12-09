@@ -229,16 +229,29 @@ public class UserController extends BaseRestController {
 **模型层模块**
 
 - 完全独立的 POJO 模块
-- 包含 `NikoResult` 统一响应对象
-- 提供 `NikoResult.success()` 和 `NikoResult.fail()` 静态方法
+- 包含 `NikoResult` 统一响应对象（参考 SaResult 实现）
+- 提供静态方法：`ok()`, `ok(String msg)`, `data(Object data)`, `error(String msg)`, `error(int code, String msg)`
+- 支持链式调用：`setCode()`, `setMsg()`, `setData()`, `set(key, value)`
 
 **使用方式**：
 ```java
-// 成功响应
-return NikoResult.success(data);
+// 成功响应（无参数）
+return NikoResult.ok();
 
-// 失败响应
-return NikoResult.fail("操作失败");
+// 成功响应（带消息）
+return NikoResult.ok("操作成功");
+
+// 成功响应（带数据）
+return NikoResult.data(user);
+
+// 错误响应
+return NikoResult.error("操作失败");
+
+// 错误响应（带错误码）
+return NikoResult.error(500, "服务器错误");
+
+// 链式调用
+return NikoResult.ok("成功").setData(user).set("extra", "value");
 ```
 
 ### niko-boot-starter-dao
@@ -326,9 +339,9 @@ public class UserController extends BaseRestController {
     private UserService userService;
     
     @GetMapping("/{id}")
-    public NikoResult<User> getById(@PathVariable Long id) {
+    public NikoResult getById(@PathVariable Long id) {
         User user = userService.getById(id);
-        return NikoResult.success(user);
+        return NikoResult.data(user);
     }
 }
 ```
@@ -351,9 +364,9 @@ public class UserController extends BaseRestController {
     private UserService userService;
     
     @GetMapping("/{id}")
-    public NikoResult<User> getById(@PathVariable Long id) {
+    public NikoResult getById(@PathVariable Long id) {
         User user = userService.getById(id);
-        return NikoResult.success(user);
+        return NikoResult.data(user);
     }
 }
 
@@ -428,7 +441,10 @@ Maven Toolchains 允许你在不改变系统默认 JDK 的情况下，为不同�
 
 ```xml
 <?xml version="1.0" encoding="UTF8"?>
-<toolchains xmlns="http://maven.apache.org/TOOLCHAINS/1.1.0">
+<toolchains xmlns="http://maven.apache.org/TOOLCHAINS/1.1.0" 
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/TOOLCHAINS/1.1.0 
+           http://maven.apache.org/xsd/toolchains-1.1.0.xsd">
   <!-- Java 21 (OpenLogic) -->
   <toolchain>
     <type>jdk</type>
@@ -452,6 +468,18 @@ Maven Toolchains 允许你在不改变系统默认 JDK 的情况下，为不同�
       <jdkHome>C:\Dev\java\openlogic-openjdk-17.0.11+9-windows-x64</jdkHome>
     </configuration>
   </toolchain>
+  
+  <!-- Java 8 (Oracle) -->
+  <toolchain>
+    <type>jdk</type>
+    <provides>
+      <version>1.8</version>
+      <vendor>oracle</vendor>
+    </provides>
+    <configuration>
+      <jdkHome>C:\Dev\java\jdk1.8.0_181</jdkHome>
+    </configuration>
+  </toolchain>
 </toolchains>
 ```
 
@@ -468,6 +496,17 @@ Maven Toolchains 允许你在不改变系统默认 JDK 的情况下，为不同�
 ```xml
 <build>
     <plugins>
+        <!-- Maven Compiler Plugin -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.13.0</version>
+            <configuration>
+                <release>${java.version}</release>
+            </configuration>
+        </plugin>
+        
+        <!-- Maven Toolchains Plugin -->
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-toolchains-plugin</artifactId>
@@ -485,6 +524,9 @@ Maven Toolchains 允许你在不改变系统默认 JDK 的情况下，为不同�
                         <version>${java.version}</version>
                         <vendor>openlogic</vendor>
                     </jdk>
+                    <jdk>
+                        <version>${java.version}</version>
+                    </jdk>
                 </toolchains>
             </configuration>
         </plugin>
@@ -492,7 +534,14 @@ Maven Toolchains 允许你在不改变系统默认 JDK 的情况下，为不同�
 </build>
 ```
 
-**项目 Java 版本**：`<java.version>21</java.version>`
+**项目 Java 版本配置**：
+```xml
+<properties>
+    <java.version>21</java.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+</properties>
+```
 
 ---
 
@@ -713,6 +762,7 @@ test -f /path/to/java21/bin/java && echo "JDK exists"
 2. 检查配置中的 `<version>` 是否匹配（如：21 vs 1.21）
 3. 检查 `<vendor>` 是否匹配
 4. 检查 `<jdkHome>` 路径是否正确
+5. 确认 XML 文件格式正确（注意编码为 UTF-8）
 
 #### 问题2：JDK路径不存在
 
@@ -726,6 +776,9 @@ test -f /path/to/java21/bin/java && echo "JDK exists"
 2. 检查路径中是否有空格或特殊字符（需要转义）
 3. 确认路径使用正斜杠 `/` 或双反斜杠 `\\`
 4. Windows：使用 PowerShell `Test-Path` 验证路径
+   ```powershell
+   Test-Path "C:\Dev\java\openlogic-openjdk-21.0.3+9-windows-x64\bin\java.exe"
+   ```
 
 #### 问题3：版本不匹配
 
@@ -738,6 +791,7 @@ test -f /path/to/java21/bin/java && echo "JDK exists"
 1. 确认Toolchains配置的JDK版本是正确的
 2. 检查 `<java.version>` 属性是否与Toolchains中的version匹配
 3. 使用 `java -version` 验证JDK版本（在JDK的bin目录下）
+4. 确认 JDK 版本与项目要求的版本一致
 
 #### 问题4：Vendor 不匹配
 
@@ -747,6 +801,20 @@ test -f /path/to/java21/bin/java && echo "JDK exists"
 1. 修改项目 pom.xml 中的 `<vendor>` 配置
 2. 或修改 toolchains.xml 中的 `<vendor>` 配置
 3. 或者不指定 vendor（推荐），只匹配 version
+4. 在 toolchains.xml 中配置多个 toolchain（一个带 vendor，一个不带）
+
+#### 问题5：XML 格式错误
+
+**错误信息**：
+```
+[ERROR] Error parsing toolchains.xml
+```
+
+**解决方法**：
+1. 检查 XML 文件格式是否正确
+2. 确认 XML 声明和命名空间正确
+3. 使用 XML 验证工具检查文件
+4. 参考本文档中的配置示例
 
 #### 查看详细错误信息
 
