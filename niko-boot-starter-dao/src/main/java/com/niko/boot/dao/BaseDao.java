@@ -6,7 +6,6 @@ import org.apache.ibatis.session.SqlSession;
 
 /**
  * Dao基础类
- * 封装chok2-devwork-dao的BaseDao
  * 提供通用的数据库操作方法
  */
 public abstract class BaseDao {
@@ -61,28 +60,28 @@ public abstract class BaseDao {
         return this.getSqlSession().update(getStatementName("modify"), entity);
     }
     
-    public <T> T queryOne(String statementName, Object param) {
+    public <T> T get(String statementName, Object param) {
         return this.getSqlSession().selectOne(getStatementName(statementName), param);
     }
     
-    public <E> List<E> queryList(String statementName, Object param) {
+    public <E> List<E> query(String statementName, Object param) {
         return this.getSqlSession().selectList(getStatementName(statementName), param);
     }
     
-    public int queryCount(String statementName, Object param) {
+    public int count(String statementName, Object param) {
         return this.getSqlSession().selectOne(getStatementName(statementName), param);
     }
     
-    public <T> T queryOne(Object param) {
-        return this.getSqlSession().selectOne(getStatementName("queryOne"), param);
+    public <T> T get(Object param) {
+        return this.getSqlSession().selectOne(getStatementName("get"), param);
     }
     
-    public <E> List<E> queryList(Object param) {
-        return this.getSqlSession().selectList(getStatementName("queryList"), param);
+    public <E> List<E> query(Object param) {
+        return this.getSqlSession().selectList(getStatementName("query"), param);
     }
     
-    public int queryCount(Object param) {
-        return this.getSqlSession().selectOne(getStatementName("queryCount"), param);
+    public int count(Object param) {
+        return this.getSqlSession().selectOne(getStatementName("count"), param);
     }
 }
 
