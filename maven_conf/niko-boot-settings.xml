@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+	
+	<!-- 指定本地仓库路径 -->
+	<localRepository>C:\Dev\repo_default</localRepository>
+
+	<!-- 指定Nexus仓库用户名和密码 -->
+	<servers>
+		<server>
+			<id>epo-releases</id>
+            <username>你的Nexus用户名</username>
+            <password>你的Nexus密码</password>
+    		</server>
+		<server>
+			<id>epo-snapshots</id>
+            <username>你的Nexus用户名</username>
+            <password>你的Nexus密码</password>
+		</server>
+	</servers>
+</settings>

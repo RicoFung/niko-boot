@@ -513,4 +513,15 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>epo-releases</id>
+            <url>http://nexus.moco.com/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>epo-snapshots</id>
+            <url>http://nexus.moco.com/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
